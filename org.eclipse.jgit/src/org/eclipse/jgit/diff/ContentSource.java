@@ -302,8 +302,17 @@ public abstract class ContentSource {
 		public long size(DiffEntry.Side side, DiffEntry ent) throws IOException {
 			switch (side) {
 			case OLD:
+				// TODO find real cause and fix it.
+				if (ent.oldId == null) {
+					System.out.println("OLD is null");
+					return 0;
+				}
 				return oldSource.size(ent.oldPath, ent.oldId.toObjectId());
 			case NEW:
+				if (ent.newId == null) {
+					System.out.println("NEW is null");
+					return 0;
+				}
 				return newSource.size(ent.newPath, ent.newId.toObjectId());
 			default:
 				throw new IllegalArgumentException();
