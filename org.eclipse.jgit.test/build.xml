@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="org.eclipse.jgit.test">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../../../../../Applications/eclipse"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <path id="Plug-in Dependencies.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/com.jcraft.jsch_0.1.46.v201205102330.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+        <pathelement location="../../../../../../../org.eclipse.jgit.console"/>
+        <pathelement location="../../../../../../../org.eclipse.jgit.iplog"/>
+        <pathelement location="../../../../../../../org.eclipse.jgit.junit"/>
+        <pathelement location="../../../../../../../org.eclipse.jgit.pgm"/>
+        <pathelement location="../../../../../../../org.eclipse.jgit.ui"/>
+        <pathelement location="../../../../../../../org.eclipse.jgit"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.integration_1.1.0.v20090501071000.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.library_1.1.0.v20090501071000.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.text_1.1.0.v20090501071000.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest_1.1.0.v20090501071000.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.10.0.v4_10_0_v20120426-0900/junit.jar"/>
+    </path>
+    <path id="org.eclipse.jgit.test.classpath">
+        <pathelement location="bin"/>
+        <path refid="Plug-in Dependencies.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="tst">
+                <exclude name="**/*.java"/>
+                <exclude name="**/*.idx"/>
+                <exclude name="**/*.pack"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="tst-rsrc">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="exttst">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="tst"/>
+            <src path="tst-rsrc"/>
+            <src path="exttst"/>
+            <exclude name="**/*.idx"/>
+            <exclude name="**/*.pack"/>
+            <classpath refid="org.eclipse.jgit.test.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="org.eclipse.jgit.core--All-Tests">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.eclipse.jgit.api.AddCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.ApplyCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.BlameCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.BranchCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CheckoutCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CherryPickCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CleanCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CloneCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CommitAndLogCommandTests" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CommitCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CommitOnlyTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.DiffCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.FetchCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.GarbageCollectCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.GitConstructionTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.HugeFileTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.InitCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.LogCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.LsRemoteCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.MergeCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.NotesCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PathCheckoutCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PullCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PullCommandWithRebaseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PushCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RebaseCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.ReflogCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RenameBranchCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.ResetCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RevertCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RmCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashApplyCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashCreateCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashDropCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashListCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StatusCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.TagCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.blame.BlameGeneratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.DiffEntryTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.DiffFormatterReflowTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.DiffFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.EditListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.EditTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.HistogramDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.MyersDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.PatchIdDiffFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreAllWhitespaceTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreLeadingWhitespaceTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreTrailingWhitespaceTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreWhitespaceChangeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RenameDetectorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.SimilarityIndexTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheBasicTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheBuilderIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheBuilderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheCGitCompatabilityTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheEntryTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheFindTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheLargePathTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCachePathEditTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheTreeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.events.ConfigChangeEventTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.fnmatch.FileNameMatcherTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.ignore.IgnoreMatcherTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.ignore.IgnoreNodeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.AbbreviatedObjectIdTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.BranchConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.BranchTrackingStatusTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ConstantsEncodingTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.DirCacheCheckoutMaliciousPathTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.DirCacheCheckoutTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.IndexDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.IndexModificationTimesTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.MergeHeadMsgTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectCheckerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdOwnerMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdRefTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdSubclassMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectLoaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.RefTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ReflogConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ReflogResolveTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.RepositoryCacheTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.RepositoryResolveTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.SquashCommitMsgTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.SymbolicRefTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.T0001_PersonIdentTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.T0002_TreeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ThreadSafeProgressMonitorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ValidRefNameTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.CherryPickTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.MergeAlgorithmTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.MergeMessageFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.ResolveMergerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.SimpleMergeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.SquashMessageFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.nls.NLSTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.nls.RootLocaleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.nls.TranslationBundleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.DefaultNoteMergerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.LeafBucketTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.NoteMapMergerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.NoteMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.EditListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.FileHeaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.GetTextTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchCcErrorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchCcTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchErrorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revplot.PlotCommitListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.AlwaysEmptyRevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.DateRevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.FIFORevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.FooterLineTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.LIFORevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.MaxCountRevFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.ObjectWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevCommitListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevCommitParseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevFlagSetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevObjectTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevTagParseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkCullTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkFollowFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkMergeBaseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkPathFilter1Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkPathFilter6012Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkResetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkShallowTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkSortTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkUtilsCountTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.SkipRevFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.AbbreviationTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.ConcurrentRepackTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.FileBasedConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.FileRepositoryBuilderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.FileSnapshotTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.GCTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.LockFileTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackFileTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackIndexV1Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackIndexV2Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackReverseIndexTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackWriterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.RefDirectoryTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.RefUpdateTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.ReflogReaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.RepositorySetupWorkDirTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.T0003_BasicTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.T0004_PackReaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.UnpackedObjectTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.WindowCacheGetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.WindowCacheReconfigureTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.pack.DeltaIndexTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.pack.DeltaStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.pack.IntSetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleAddTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleInitTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleStatusTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleSyncTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleUpdateTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.BundleWriterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.LongMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.OpenSshConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PackParserTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PacketLineInTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PacketLineOutTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PushProcessTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.ReceivePackAdvertiseRefsHookTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.RefSpecTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.RemoteConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.SideBandOutputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.TransportTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.URIishTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.AbstractTreeIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.CanonicalTreeParserTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.EmptyTreeIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.FileTreeIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.ForPathTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.NameConflictTreeWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.PostOrderTreeWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.TreeWalkBasicDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.IndexDiffFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.NotTreeFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.PathSuffixFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.TreeFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.Base64Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.BlockListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.ChangeIdUtilTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.FileUtilTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.GitDateFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.GitDateParserBadlyFormattedTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.GitDateParserTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.IntListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.NBTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.QuotedStringBourneStyleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.QuotedStringBourneUserPathStyleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.QuotedStringGitPathStyleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawCharUtilTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtilsTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_FormatTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_HexParseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_LineMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_MatchTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_ParsePersonIdentTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.ReadLinesTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RefListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RefMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RelativeDateFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.StringUtilsTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.TemporaryBufferTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.AutoCRLFInputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.AutoCRLFOutputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.EolCanonicalizingInputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.TimeoutInputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.TimeoutOutputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.UnionInputStreamTest" todir="${junit.output.dir}"/>
+            <classpath refid="org.eclipse.jgit.test.classpath"/>
+        </junit>
+    </target>
+    <target name="org.eclipse.jgit.core--All-Tests (Java 6)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.eclipse.jgit.api.AddCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.ApplyCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.BlameCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.BranchCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CheckoutCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CherryPickCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CleanCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CloneCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CommitAndLogCommandTests" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CommitCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.CommitOnlyTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.DiffCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.FetchCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.GarbageCollectCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.GitConstructionTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.HugeFileTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.InitCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.LogCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.LsRemoteCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.MergeCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.NotesCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PathCheckoutCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PullCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PullCommandWithRebaseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.PushCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RebaseCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.ReflogCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RenameBranchCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.ResetCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RevertCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.RmCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashApplyCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashCreateCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashDropCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StashListCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.StatusCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.TagCommandTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.api.blame.BlameGeneratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.DiffEntryTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.DiffFormatterReflowTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.DiffFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.EditListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.EditTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.HistogramDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.MyersDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.PatchIdDiffFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreAllWhitespaceTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreLeadingWhitespaceTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreTrailingWhitespaceTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextIgnoreWhitespaceChangeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RawTextTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.RenameDetectorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.diff.SimilarityIndexTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheBasicTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheBuilderIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheBuilderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheCGitCompatabilityTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheEntryTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheFindTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheLargePathTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCachePathEditTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.dircache.DirCacheTreeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.events.ConfigChangeEventTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.fnmatch.FileNameMatcherTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.ignore.IgnoreMatcherTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.ignore.IgnoreNodeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.AbbreviatedObjectIdTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.BranchConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.BranchTrackingStatusTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ConstantsEncodingTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.DirCacheCheckoutMaliciousPathTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.DirCacheCheckoutTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.IndexDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.IndexModificationTimesTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.MergeHeadMsgTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectCheckerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdOwnerMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdRefTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdSubclassMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectIdTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ObjectLoaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.RefTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ReflogConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ReflogResolveTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.RepositoryCacheTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.RepositoryResolveTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.SquashCommitMsgTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.SymbolicRefTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.T0001_PersonIdentTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.T0002_TreeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ThreadSafeProgressMonitorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.lib.ValidRefNameTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.CherryPickTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.MergeAlgorithmTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.MergeMessageFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.ResolveMergerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.SimpleMergeTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.merge.SquashMessageFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.nls.NLSTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.nls.RootLocaleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.nls.TranslationBundleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.DefaultNoteMergerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.LeafBucketTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.NoteMapMergerTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.notes.NoteMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.EditListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.FileHeaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.GetTextTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchCcErrorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchCcTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchErrorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.patch.PatchTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revplot.PlotCommitListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.AlwaysEmptyRevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.DateRevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.FIFORevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.FooterLineTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.LIFORevQueueTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.MaxCountRevFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.ObjectWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevCommitListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevCommitParseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevFlagSetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevObjectTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevTagParseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkCullTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkFollowFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkMergeBaseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkPathFilter1Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkPathFilter6012Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkResetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkShallowTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkSortTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.RevWalkUtilsCountTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.revwalk.SkipRevFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.AbbreviationTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.ConcurrentRepackTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.FileBasedConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.FileRepositoryBuilderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.FileSnapshotTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.GCTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.LockFileTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackFileTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackIndexV1Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackIndexV2Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackReverseIndexTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.PackWriterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.RefDirectoryTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.RefUpdateTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.ReflogReaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.RepositorySetupWorkDirTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.T0003_BasicTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.T0004_PackReaderTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.UnpackedObjectTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.WindowCacheGetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.file.WindowCacheReconfigureTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.pack.DeltaIndexTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.pack.DeltaStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.storage.pack.IntSetTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleAddTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleInitTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleStatusTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleSyncTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleUpdateTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.submodule.SubmoduleWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.BundleWriterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.LongMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.OpenSshConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PackParserTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PacketLineInTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PacketLineOutTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.PushProcessTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.ReceivePackAdvertiseRefsHookTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.RefSpecTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.RemoteConfigTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.SideBandOutputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.TransportTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.transport.URIishTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.AbstractTreeIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.CanonicalTreeParserTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.EmptyTreeIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.FileTreeIteratorTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.ForPathTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.NameConflictTreeWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.PostOrderTreeWalkTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.TreeWalkBasicDiffTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.IndexDiffFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.NotTreeFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.PathSuffixFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.treewalk.filter.TreeFilterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.Base64Test" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.BlockListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.ChangeIdUtilTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.FileUtilTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.GitDateFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.GitDateParserBadlyFormattedTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.GitDateParserTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.IntListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.NBTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.QuotedStringBourneStyleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.QuotedStringBourneUserPathStyleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.QuotedStringGitPathStyleTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawCharUtilTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtilsTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_FormatTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_HexParseTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_LineMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_MatchTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RawParseUtils_ParsePersonIdentTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.ReadLinesTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RefListTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RefMapTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.RelativeDateFormatterTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.StringUtilsTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.TemporaryBufferTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.AutoCRLFInputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.AutoCRLFOutputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.EolCanonicalizingInputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.TimeoutInputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.TimeoutOutputStreamTest" todir="${junit.output.dir}"/>
+            <test name="org.eclipse.jgit.util.io.UnionInputStreamTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-Xmx256m"/>
+            <classpath refid="org.eclipse.jgit.test.classpath"/>
+        </junit>
+    </target>
+    <target name="org.eclipse.jgit.core--All-External-Tests">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.eclipse.jgit.patch.EGitPatchHistoryTest" todir="${junit.output.dir}"/>
+            <classpath refid="org.eclipse.jgit.test.classpath"/>
+        </junit>
+    </target>
+    <target name="org.eclipse.jgit.core--All-External-Tests (Java 6)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.eclipse.jgit.patch.EGitPatchHistoryTest" todir="${junit.output.dir}"/>
+            <classpath refid="org.eclipse.jgit.test.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
