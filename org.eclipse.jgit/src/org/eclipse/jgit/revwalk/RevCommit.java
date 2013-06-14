@@ -317,9 +317,9 @@ public class RevCommit extends RevObject {
 	 * this buffer should be very careful to ensure they do not modify its
 	 * contents during their use of it.
 	 *
-	 * @return the raw unparsed commit body. This is <b>NOT A COPY</b>.
-	 *         Altering the contents of this buffer may alter the walker's
-	 *         knowledge of this commit, and the results it produces.
+	 * @return the raw unparsed commit body. This is <b>NOT A COPY</b>. Altering
+	 *         the contents of this buffer may alter the walker's knowledge of
+	 *         this commit, and the results it produces.
 	 */
 	public final byte[] getRawBuffer() {
 		return buffer;
@@ -471,7 +471,8 @@ public class RevCommit extends RevObject {
 	public final List<FooterLine> getFooterLines() {
 		final byte[] raw = buffer;
 		int ptr = raw.length - 1;
-		while (raw[ptr] == '\n') // trim any trailing LFs, not interesting
+		while (raw[ptr] == '\n')
+			// trim any trailing LFs, not interesting
 			ptr--;
 
 		final int msgB = RawParseUtils.commitMessage(raw, 0);
@@ -576,15 +577,17 @@ public class RevCommit extends RevObject {
 	private boolean gitCommit = true;
 
 	/**
+	 * Checks to see if the commit is a git commit. This method only has sense
+	 * in our tools (gitsvn) context. By default, each commit is a git one.
 	 *
-	 * @return smth
+	 * @return true if it is a git commit; false otherwise
 	 */
 	public boolean isGitCommit() {
 		return gitCommit;
 	}
 
 	/**
-	 *
+	 * Marks this commit as a not git one. Use with great care.
 	 */
 	public void markAsNotGitCommit() {
 		gitCommit = false;
