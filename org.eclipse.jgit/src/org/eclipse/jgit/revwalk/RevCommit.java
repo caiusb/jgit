@@ -572,4 +572,22 @@ public class RevCommit extends RevObject {
 		appendCoreFlags(s);
 		return s.toString();
 	}
+
+	private boolean gitCommit = true;
+
+	/**
+	 *
+	 * @return smth
+	 */
+	public boolean isGitCommit() {
+		return gitCommit;
+	}
+
+	/**
+	 *
+	 */
+	public void markAsNotGitCommit() {
+		gitCommit = false;
+	}
+
 }
