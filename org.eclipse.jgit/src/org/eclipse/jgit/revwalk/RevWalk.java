@@ -1329,4 +1329,18 @@ public class RevWalk implements Iterable<RevCommit> {
 		for (ObjectId id : reader.getShallowCommits())
 			lookupCommit(id).parents = RevCommit.NO_PARENTS;
 	}
+
+	/**
+	 * Returns the queue of commits to be processed.
+	 *
+	 * @return the queue
+	 */
+	public List<String> getQueue() {
+		RevCommit next = queue.next();
+		List<String> ids = new ArrayList<String>();
+		while (next != null) {
+			ids.add(next.name());
+		}
+		return ids;
+	}
 }
