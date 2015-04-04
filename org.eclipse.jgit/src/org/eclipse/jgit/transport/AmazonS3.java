@@ -113,24 +113,22 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class AmazonS3 {
 	private static final Set<String> SIGNED_HEADERS;
 
-	private static final String HMAC = "HmacSHA1";
+	private static final String HMAC = "HmacSHA1"; //$NON-NLS-1$
 
-	private static final String DOMAIN = "s3.amazonaws.com";
+	private static final String X_AMZ_ACL = "x-amz-acl"; //$NON-NLS-1$
 
-	private static final String X_AMZ_ACL = "x-amz-acl";
-
-	private static final String X_AMZ_META = "x-amz-meta-";
+	private static final String X_AMZ_META = "x-amz-meta-"; //$NON-NLS-1$
 
 	static {
 		SIGNED_HEADERS = new HashSet<String>();
-		SIGNED_HEADERS.add("content-type");
-		SIGNED_HEADERS.add("content-md5");
-		SIGNED_HEADERS.add("date");
+		SIGNED_HEADERS.add("content-type"); //$NON-NLS-1$
+		SIGNED_HEADERS.add("content-md5"); //$NON-NLS-1$
+		SIGNED_HEADERS.add("date"); //$NON-NLS-1$
 	}
 
 	private static boolean isSignedHeader(final String name) {
 		final String nameLC = StringUtils.toLowerCase(name);
-		return SIGNED_HEADERS.contains(nameLC) || nameLC.startsWith("x-amz-");
+		return SIGNED_HEADERS.contains(nameLC) || nameLC.startsWith("x-amz-"); //$NON-NLS-1$
 	}
 
 	private static String toCleanString(final List<String> list) {
@@ -138,27 +136,27 @@ public class AmazonS3 {
 		for (final String v : list) {
 			if (s.length() > 0)
 				s.append(',');
-			s.append(v.replaceAll("\n", "").trim());
+			s.append(v.replaceAll("\n", "").trim()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return s.toString();
 	}
 
 	private static String remove(final Map<String, String> m, final String k) {
 		final String r = m.remove(k);
-		return r != null ? r : "";
+		return r != null ? r : ""; //$NON-NLS-1$
 	}
 
 	private static String httpNow() {
-		final String tz = "GMT";
+		final String tz = "GMT"; //$NON-NLS-1$
 		final SimpleDateFormat fmt;
-		fmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
+		fmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US); //$NON-NLS-1$
 		fmt.setTimeZone(TimeZone.getTimeZone(tz));
-		return fmt.format(new Date()) + " " + tz;
+		return fmt.format(new Date()) + " " + tz; //$NON-NLS-1$
 	}
 
 	private static MessageDigest newMD5() {
 		try {
-			return MessageDigest.getInstance("MD5");
+			return MessageDigest.getInstance("MD5"); //$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(JGitText.get().JRELacksMD5Implementation, e);
 		}
@@ -182,6 +180,12 @@ public class AmazonS3 {
 	/** Encryption algorithm, may be a null instance that provides pass-through. */
 	private final WalkEncryption encryption;
 
+	/** Directory for locally buffered content. */
+	private final File tmpDir;
+
+	/** S3 Bucket Domain. */
+	private final String domain;
+
 	/**
 	 * Create a new S3 client for the supplied user information.
 	 * <p>
@@ -198,6 +202,10 @@ public class AmazonS3 {
 	 * # PRIVATE, PUBLIC_READ (defaults to PRIVATE).
 	 * acl: PRIVATE
 	 *
+	 * # S3 Domain
+	 * # AWS S3 Region Domain (defaults to s3.amazonaws.com)
+	 * domain: s3.amazonaws.com
+	 *
 	 * # Number of times to retry after internal error from S3.
 	 * httpclient.retry-max: 3
 	 *
@@ -211,33 +219,34 @@ public class AmazonS3 {
 	 *
 	 */
 	public AmazonS3(final Properties props) {
-		publicKey = props.getProperty("accesskey");
+		domain = props.getProperty("domain", "s3.amazonaws.com"); //$NON-NLS-1$ //$NON-NLS-2$
+		publicKey = props.getProperty("accesskey"); //$NON-NLS-1$
 		if (publicKey == null)
 			throw new IllegalArgumentException(JGitText.get().missingAccesskey);
 
-		final String secret = props.getProperty("secretkey");
+		final String secret = props.getProperty("secretkey"); //$NON-NLS-1$
 		if (secret == null)
 			throw new IllegalArgumentException(JGitText.get().missingSecretkey);
 		privateKey = new SecretKeySpec(Constants.encodeASCII(secret), HMAC);
 
-		final String pacl = props.getProperty("acl", "PRIVATE");
-		if (StringUtils.equalsIgnoreCase("PRIVATE", pacl))
-			acl = "private";
-		else if (StringUtils.equalsIgnoreCase("PUBLIC", pacl))
-			acl = "public-read";
-		else if (StringUtils.equalsIgnoreCase("PUBLIC-READ", pacl))
-			acl = "public-read";
-		else if (StringUtils.equalsIgnoreCase("PUBLIC_READ", pacl))
-			acl = "public-read";
+		final String pacl = props.getProperty("acl", "PRIVATE"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (StringUtils.equalsIgnoreCase("PRIVATE", pacl)) //$NON-NLS-1$
+			acl = "private"; //$NON-NLS-1$
+		else if (StringUtils.equalsIgnoreCase("PUBLIC", pacl)) //$NON-NLS-1$
+			acl = "public-read"; //$NON-NLS-1$
+		else if (StringUtils.equalsIgnoreCase("PUBLIC-READ", pacl)) //$NON-NLS-1$
+			acl = "public-read"; //$NON-NLS-1$
+		else if (StringUtils.equalsIgnoreCase("PUBLIC_READ", pacl)) //$NON-NLS-1$
+			acl = "public-read"; //$NON-NLS-1$
 		else
-			throw new IllegalArgumentException("Invalid acl: " + pacl);
+			throw new IllegalArgumentException("Invalid acl: " + pacl); //$NON-NLS-1$
 
 		try {
-			final String cPas = props.getProperty("password");
+			final String cPas = props.getProperty("password"); //$NON-NLS-1$
 			if (cPas != null) {
-				String cAlg = props.getProperty("crypto.algorithm");
+				String cAlg = props.getProperty("crypto.algorithm"); //$NON-NLS-1$
 				if (cAlg == null)
-					cAlg = "PBEWithMD5AndDES";
+					cAlg = "PBEWithMD5AndDES"; //$NON-NLS-1$
 				encryption = new WalkEncryption.ObjectEncryptionV2(cAlg, cPas);
 			} else {
 				encryption = WalkEncryption.NONE;
@@ -249,8 +258,11 @@ public class AmazonS3 {
 		}
 
 		maxAttempts = Integer.parseInt(props.getProperty(
-				"httpclient.retry-max", "3"));
+				"httpclient.retry-max", "3")); //$NON-NLS-1$ //$NON-NLS-2$
 		proxySelector = ProxySelector.getDefault();
+
+		String tmp = props.getProperty("tmpdir"); //$NON-NLS-1$
+		tmpDir = tmp != null && tmp.length() > 0 ? new File(tmp) : null;
 	}
 
 	/**
@@ -269,7 +281,7 @@ public class AmazonS3 {
 	public URLConnection get(final String bucket, final String key)
 			throws IOException {
 		for (int curAttempt = 0; curAttempt < maxAttempts; curAttempt++) {
-			final HttpURLConnection c = open("GET", bucket, key);
+			final HttpURLConnection c = open("GET", bucket, key); //$NON-NLS-1$
 			authorize(c);
 			switch (HttpSupport.response(c)) {
 			case HttpURLConnection.HTTP_OK:
@@ -321,8 +333,8 @@ public class AmazonS3 {
 	 */
 	public List<String> list(final String bucket, String prefix)
 			throws IOException {
-		if (prefix.length() > 0 && !prefix.endsWith("/"))
-			prefix += "/";
+		if (prefix.length() > 0 && !prefix.endsWith("/")) //$NON-NLS-1$
+			prefix += "/"; //$NON-NLS-1$
 		final ListParser lp = new ListParser(bucket, prefix);
 		do {
 			lp.list();
@@ -345,7 +357,7 @@ public class AmazonS3 {
 	public void delete(final String bucket, final String key)
 			throws IOException {
 		for (int curAttempt = 0; curAttempt < maxAttempts; curAttempt++) {
-			final HttpURLConnection c = open("DELETE", bucket, key);
+			final HttpURLConnection c = open("DELETE", bucket, key); //$NON-NLS-1$
 			authorize(c);
 			switch (HttpSupport.response(c)) {
 			case HttpURLConnection.HTTP_NO_CONTENT:
@@ -394,9 +406,9 @@ public class AmazonS3 {
 		final String md5str = Base64.encodeBytes(newMD5().digest(data));
 		final String lenstr = String.valueOf(data.length);
 		for (int curAttempt = 0; curAttempt < maxAttempts; curAttempt++) {
-			final HttpURLConnection c = open("PUT", bucket, key);
-			c.setRequestProperty("Content-Length", lenstr);
-			c.setRequestProperty("Content-MD5", md5str);
+			final HttpURLConnection c = open("PUT", bucket, key); //$NON-NLS-1$
+			c.setRequestProperty("Content-Length", lenstr); //$NON-NLS-1$
+			c.setRequestProperty("Content-MD5", md5str); //$NON-NLS-1$
 			c.setRequestProperty(X_AMZ_ACL, acl);
 			authorize(c);
 			c.setDoOutput(true);
@@ -452,7 +464,7 @@ public class AmazonS3 {
 			final ProgressMonitor monitor, final String monitorTask)
 			throws IOException {
 		final MessageDigest md5 = newMD5();
-		final TemporaryBuffer buffer = new TemporaryBuffer.LocalFile() {
+		final TemporaryBuffer buffer = new TemporaryBuffer.LocalFile(tmpDir) {
 			@Override
 			public void close() throws IOException {
 				super.close();
@@ -479,9 +491,9 @@ public class AmazonS3 {
 		final long len = buf.length();
 		final String lenstr = String.valueOf(len);
 		for (int curAttempt = 0; curAttempt < maxAttempts; curAttempt++) {
-			final HttpURLConnection c = open("PUT", bucket, key);
-			c.setRequestProperty("Content-Length", lenstr);
-			c.setRequestProperty("Content-MD5", md5str);
+			final HttpURLConnection c = open("PUT", bucket, key); //$NON-NLS-1$
+			c.setRequestProperty("Content-Length", lenstr); //$NON-NLS-1$
+			c.setRequestProperty("Content-MD5", md5str); //$NON-NLS-1$
 			c.setRequestProperty(X_AMZ_ACL, acl);
 			encryption.request(c, X_AMZ_META);
 			authorize(c);
@@ -529,7 +541,7 @@ public class AmazonS3 {
 		}
 		buf = b.toByteArray();
 		if (buf.length > 0)
-			err.initCause(new IOException("\n" + new String(buf)));
+			err.initCause(new IOException("\n" + new String(buf))); //$NON-NLS-1$
 		return err;
 	}
 
@@ -549,10 +561,10 @@ public class AmazonS3 {
 			final String key, final Map<String, String> args)
 			throws IOException {
 		final StringBuilder urlstr = new StringBuilder();
-		urlstr.append("http://");
+		urlstr.append("http://"); //$NON-NLS-1$
 		urlstr.append(bucket);
 		urlstr.append('.');
-		urlstr.append(DOMAIN);
+		urlstr.append(domain);
 		urlstr.append('/');
 		if (key.length() > 0)
 			HttpSupport.encode(urlstr, key);
@@ -577,8 +589,8 @@ public class AmazonS3 {
 
 		c = (HttpURLConnection) url.openConnection(proxy);
 		c.setRequestMethod(method);
-		c.setRequestProperty("User-Agent", "jgit/1.0");
-		c.setRequestProperty("Date", httpNow());
+		c.setRequestProperty("User-Agent", "jgit/1.0"); //$NON-NLS-1$ //$NON-NLS-2$
+		c.setRequestProperty("Date", httpNow()); //$NON-NLS-1$
 		return c;
 	}
 
@@ -595,13 +607,13 @@ public class AmazonS3 {
 		s.append(c.getRequestMethod());
 		s.append('\n');
 
-		s.append(remove(sigHdr, "content-md5"));
+		s.append(remove(sigHdr, "content-md5")); //$NON-NLS-1$
 		s.append('\n');
 
-		s.append(remove(sigHdr, "content-type"));
+		s.append(remove(sigHdr, "content-type")); //$NON-NLS-1$
 		s.append('\n');
 
-		s.append(remove(sigHdr, "date"));
+		s.append(remove(sigHdr, "date")); //$NON-NLS-1$
 		s.append('\n');
 
 		for (final Map.Entry<String, String> e : sigHdr.entrySet()) {
@@ -613,20 +625,20 @@ public class AmazonS3 {
 
 		final String host = c.getURL().getHost();
 		s.append('/');
-		s.append(host.substring(0, host.length() - DOMAIN.length() - 1));
+		s.append(host.substring(0, host.length() - domain.length() - 1));
 		s.append(c.getURL().getPath());
 
 		final String sec;
 		try {
 			final Mac m = Mac.getInstance(HMAC);
 			m.init(privateKey);
-			sec = Base64.encodeBytes(m.doFinal(s.toString().getBytes("UTF-8")));
+			sec = Base64.encodeBytes(m.doFinal(s.toString().getBytes("UTF-8"))); //$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
 			throw new IOException(MessageFormat.format(JGitText.get().noHMACsupport, HMAC, e.getMessage()));
 		} catch (InvalidKeyException e) {
 			throw new IOException(MessageFormat.format(JGitText.get().invalidKey, e.getMessage()));
 		}
-		c.setRequestProperty("Authorization", "AWS " + publicKey + ":" + sec);
+		c.setRequestProperty("Authorization", "AWS " + publicKey + ":" + sec); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	static Properties properties(final File authFile)
@@ -660,12 +672,12 @@ public class AmazonS3 {
 		void list() throws IOException {
 			final Map<String, String> args = new TreeMap<String, String>();
 			if (prefix.length() > 0)
-				args.put("prefix", prefix);
+				args.put("prefix", prefix); //$NON-NLS-1$
 			if (!entries.isEmpty())
-				args.put("marker", prefix + entries.get(entries.size() - 1));
+				args.put("marker", prefix + entries.get(entries.size() - 1)); //$NON-NLS-1$
 
 			for (int curAttempt = 0; curAttempt < maxAttempts; curAttempt++) {
-				final HttpURLConnection c = open("GET", bucket, "", args);
+				final HttpURLConnection c = open("GET", bucket, "", args); //$NON-NLS-1$ //$NON-NLS-2$
 				authorize(c);
 				switch (HttpSupport.response(c)) {
 				case HttpURLConnection.HTTP_OK:
@@ -696,17 +708,17 @@ public class AmazonS3 {
 					continue;
 
 				default:
-					throw AmazonS3.this.error("Listing", prefix, c);
+					throw AmazonS3.this.error("Listing", prefix, c); //$NON-NLS-1$
 				}
 			}
-			throw maxAttempts("Listing", prefix);
+			throw maxAttempts("Listing", prefix); //$NON-NLS-1$
 		}
 
 		@Override
 		public void startElement(final String uri, final String name,
 				final String qName, final Attributes attributes)
 				throws SAXException {
-			if ("Key".equals(name) || "IsTruncated".equals(name))
+			if ("Key".equals(name) || "IsTruncated".equals(name)) //$NON-NLS-1$ //$NON-NLS-2$
 				data = new StringBuilder();
 		}
 
@@ -727,10 +739,10 @@ public class AmazonS3 {
 		@Override
 		public void endElement(final String uri, final String name,
 				final String qName) throws SAXException {
-			if ("Key".equals(name))
+			if ("Key".equals(name)) //$NON-NLS-1$
 				entries.add(data.toString().substring(prefix.length()));
-			else if ("IsTruncated".equals(name))
-				truncated = StringUtils.equalsIgnoreCase("true", data.toString());
+			else if ("IsTruncated".equals(name)) //$NON-NLS-1$
+				truncated = StringUtils.equalsIgnoreCase("true", data.toString()); //$NON-NLS-1$
 			data = null;
 		}
 	}

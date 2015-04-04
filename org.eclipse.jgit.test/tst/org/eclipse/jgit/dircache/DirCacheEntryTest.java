@@ -49,7 +49,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Test;
@@ -71,7 +70,12 @@ public class DirCacheEntryTest {
 	}
 
 	private static boolean isValidPath(final String path) {
-		return DirCacheEntry.isValidPath(Constants.encode(path));
+		try {
+			DirCacheCheckout.checkValidPath(path);
+			return true;
+		} catch (InvalidPathException e) {
+			return false;
+		}
 	}
 
 	@Test
@@ -176,7 +180,7 @@ public class DirCacheEntryTest {
 		copyMetaDataHelper(true);
 	}
 
-	private void copyMetaDataHelper(final boolean keepStage) {
+	private static void copyMetaDataHelper(final boolean keepStage) {
 		DirCacheEntry e = new DirCacheEntry("some/path", DirCacheEntry.STAGE_2);
 		e.setAssumeValid(false);
 		e.setCreationTime(2L);

@@ -43,62 +43,67 @@
 
 package org.eclipse.jgit.pgm;
 
-import java.lang.String;
-import java.lang.System;
-import java.text.MessageFormat;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
-import org.eclipse.jgit.lib.FileMode;
-import org.eclipse.jgit.lib.MutableObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.pgm.CLIText;
+import org.eclipse.jgit.api.ArchiveCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.archive.ArchiveFormats;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.pgm.TextBuiltin;
-import org.eclipse.jgit.treewalk.AbstractTreeIterator;
-import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.pgm.internal.CLIText;
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 
 @Command(common = true, usage = "usage_archive")
 class Archive extends TextBuiltin {
+	static {
+		ArchiveFormats.registerAll();
+	}
+
 	@Argument(index = 0, metaVar = "metaVar_treeish")
-	private AbstractTreeIterator tree;
+	private ObjectId tree;
+
+	@Option(name = "--format", metaVar = "metaVar_archiveFormat", usage = "usage_archiveFormat")
+	private String format;
+
+	@Option(name = "--prefix", metaVar = "metaVar_archivePrefix", usage = "usage_archivePrefix")
+	private String prefix;
+
+	@Option(name = "--output", aliases = { "-o" }, metaVar = "metaVar_file", usage = "usage_archiveOutput")
+	private String output;
 
 	@Override
 	protected void run() throws Exception {
-		final TreeWalk walk = new TreeWalk(db);
-		final ObjectReader reader = walk.getObjectReader();
-		final MutableObjectId idBuf = new MutableObjectId();
-		final ZipOutputStream out = new ZipOutputStream(outs);
-
 		if (tree == null)
 			throw die(CLIText.get().treeIsRequired);
 
-		walk.reset();
-		walk.addTree(tree);
-		walk.setRecursive(true);
-		while (walk.next()) {
-			final String name = walk.getPathString();
-			final FileMode mode = walk.getFileMode(0);
+		OutputStream stream = null;
+		try {
+			if (output != null)
+				stream = new FileOutputStream(output);
+			else
+				stream = outs;
 
-			if (mode == FileMode.TREE)
-				// ZIP entries for directories are optional.
-				// Leave them out, mimicking "git archive".
-				continue;
-
-			walk.getObjectId(idBuf, 0);
-			final ZipEntry entry = new ZipEntry(name);
-			final ObjectLoader loader = reader.open(idBuf);
-			entry.setSize(loader.getSize());
-			out.putNextEntry(entry);
-			loader.copyTo(out);
-
-			if (mode != FileMode.REGULAR_FILE)
-				System.err.println(MessageFormat.format( //
-						CLIText.get().archiveEntryModeIgnored, //
-						name));
+			try {
+				ArchiveCommand cmd = new Git(db).archive()
+					.setTree(tree)
+					.setFormat(format)
+					.setPrefix(prefix)
+					.setOutputStream(stream);
+				if (output != null)
+					cmd.setFilename(output);
+				cmd.call();
+		} catch (GitAPIException e) {
+			throw die(e.getMessage());
 		}
-
-		out.close();
+		} catch (FileNotFoundException e) {
+			throw die(e.getMessage());
+		} finally {
+			if (output != null && stream != null)
+				stream.close();
+		}
 	}
 }

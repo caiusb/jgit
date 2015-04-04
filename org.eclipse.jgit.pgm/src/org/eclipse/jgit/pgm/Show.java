@@ -63,6 +63,7 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.pgm.internal.CLIText;
 import org.eclipse.jgit.pgm.opt.PathTreeFilterHandler;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevObject;
@@ -154,14 +155,14 @@ class Show extends TextBuiltin {
 
 	@Option(name = "--no-prefix", usage = "usage_noPrefix")
 	void noPrefix(@SuppressWarnings("unused") boolean on) {
-		diffFmt.setOldPrefix("");
-		diffFmt.setNewPrefix("");
+		diffFmt.setOldPrefix(""); //$NON-NLS-1$
+		diffFmt.setNewPrefix(""); //$NON-NLS-1$
 	}
 
 	// END -- Options shared with Diff
 
 	Show() {
-		fmt = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy ZZZZZ", Locale.US);
+		fmt = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy ZZZZZ", Locale.US); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("boxing")
@@ -198,7 +199,7 @@ class Show extends TextBuiltin {
 					break;
 
 				case Constants.OBJ_TREE:
-					outw.print("tree ");
+					outw.print("tree "); //$NON-NLS-1$
 					outw.print(objectName);
 					outw.println();
 					outw.println();
@@ -225,7 +226,7 @@ class Show extends TextBuiltin {
 
 	private void show(RevTag tag) throws IOException {
 		outw.print(CLIText.get().tagLabel);
-		outw.print(" ");
+		outw.print(" "); //$NON-NLS-1$
 		outw.print(tag.getTagName());
 		outw.println();
 
@@ -241,9 +242,9 @@ class Show extends TextBuiltin {
 		}
 
 		outw.println();
-		final String[] lines = tag.getFullMessage().split("\n");
+		final String[] lines = tag.getFullMessage().split("\n"); //$NON-NLS-1$
 		for (final String s : lines) {
-			outw.print("    ");
+			outw.print("    "); //$NON-NLS-1$
 			outw.print(s);
 			outw.println();
 		}
@@ -261,7 +262,7 @@ class Show extends TextBuiltin {
 			outw.print(walk.getPathString());
 			final FileMode mode = walk.getFileMode(0);
 			if (mode == FileMode.TREE)
-				outw.print("/");
+				outw.print("/"); //$NON-NLS-1$
 			outw.println();
 		}
 	}
@@ -270,7 +271,7 @@ class Show extends TextBuiltin {
 		char[] outbuffer = new char[Constants.OBJECT_ID_LENGTH * 2];
 
 		outw.print(CLIText.get().commitLabel);
-		outw.print(" ");
+		outw.print(" "); //$NON-NLS-1$
 		c.getId().copyTo(outbuffer, outw);
 		outw.println();
 
@@ -284,9 +285,9 @@ class Show extends TextBuiltin {
 				fmt.format(author.getWhen())));
 
 		outw.println();
-		final String[] lines = c.getFullMessage().split("\n");
+		final String[] lines = c.getFullMessage().split("\n"); //$NON-NLS-1$
 		for (final String s : lines) {
-			outw.print("    ");
+			outw.print("    "); //$NON-NLS-1$
 			outw.print(s);
 			outw.println();
 		}

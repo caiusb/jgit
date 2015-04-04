@@ -58,6 +58,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.pgm.internal.CLIText;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
@@ -112,7 +113,7 @@ class Push extends TextBuiltin {
 		PushCommand push = git.push();
 		push.setDryRun(dryRun);
 		push.setForce(force);
-		push.setProgressMonitor(new TextProgressMonitor());
+		push.setProgressMonitor(new TextProgressMonitor(errw));
 		push.setReceivePack(receivePack);
 		push.setRefSpecs(refSpecs);
 		if (all)
@@ -160,7 +161,7 @@ class Push extends TextBuiltin {
 				printRefUpdateResult(reader, uri, result, rru);
 		}
 
-		AbstractFetchCommand.showRemoteMessages(result.getMessages());
+		AbstractFetchCommand.showRemoteMessages(errw, result.getMessages());
 		if (everythingUpToDate)
 			outw.println(CLIText.get().everythingUpToDate);
 	}
@@ -194,7 +195,7 @@ class Push extends TextBuiltin {
 					final char flag = fastForward ? ' ' : '+';
 					final String summary = safeAbbreviate(reader, oldRef
 							.getObjectId())
-							+ (fastForward ? ".." : "...")
+							+ (fastForward ? ".." : "...") //$NON-NLS-1$ //$NON-NLS-2$
 							+ safeAbbreviate(reader, rru.getNewObjectId());
 					final String message = fastForward ? null : CLIText.get().forcedUpdate;
 					printUpdateLine(flag, summary, srcRef, remoteName, message);
@@ -241,7 +242,7 @@ class Push extends TextBuiltin {
 		}
 	}
 
-	private String safeAbbreviate(ObjectReader reader, ObjectId id) {
+	private static String safeAbbreviate(ObjectReader reader, ObjectId id) {
 		try {
 			return reader.abbreviate(id).name();
 		} catch (IOException cannotAbbreviate) {
@@ -252,14 +253,14 @@ class Push extends TextBuiltin {
 	private void printUpdateLine(final char flag, final String summary,
 			final String srcRef, final String destRef, final String message)
 			throws IOException {
-		outw.format(" %c %-17s", valueOf(flag), summary);
+		outw.format(" %c %-17s", valueOf(flag), summary); //$NON-NLS-1$
 
 		if (srcRef != null)
-			outw.format(" %s ->", abbreviateRef(srcRef, true));
-		outw.format(" %s", abbreviateRef(destRef, true));
+			outw.format(" %s ->", abbreviateRef(srcRef, true)); //$NON-NLS-1$
+		outw.format(" %s", abbreviateRef(destRef, true)); //$NON-NLS-1$
 
 		if (message != null)
-			outw.format(" (%s)", message);
+			outw.format(" (%s)", message); //$NON-NLS-1$
 
 		outw.println();
 	}

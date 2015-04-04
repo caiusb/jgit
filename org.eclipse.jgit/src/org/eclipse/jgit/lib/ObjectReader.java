@@ -52,10 +52,10 @@ import java.util.Set;
 
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
+import org.eclipse.jgit.internal.storage.pack.ObjectReuseAsIs;
 import org.eclipse.jgit.revwalk.ObjectWalk;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.pack.ObjectReuseAsIs;
 
 /**
  * Reads an {@link ObjectDatabase} for a single thread.
@@ -63,7 +63,7 @@ import org.eclipse.jgit.storage.pack.ObjectReuseAsIs;
  * Readers that can support efficient reuse of pack encoded objects should also
  * implement the companion interface {@link ObjectReuseAsIs}.
  */
-public abstract class ObjectReader {
+public abstract class ObjectReader implements AutoCloseable {
 	/** Type hint indicating the caller doesn't know the type. */
 	public static final int OBJ_ANY = -1;
 
@@ -194,9 +194,9 @@ public abstract class ObjectReader {
 	 * @param objectId
 	 *            identity of the object to test for existence of.
 	 * @param typeHint
-	 *            hint about the type of object being requested;
-	 *            {@link #OBJ_ANY} if the object type is not known, or does not
-	 *            matter to the caller.
+	 *            hint about the type of object being requested, e.g.
+	 *            {@link Constants#OBJ_BLOB}; {@link #OBJ_ANY} if the object
+	 *            type is not known, or does not matter to the caller.
 	 * @return true if the specified object is stored in this database.
 	 * @throws IncorrectObjectTypeException
 	 *             typeHint was not OBJ_ANY, and the object's actual type does
@@ -235,9 +235,9 @@ public abstract class ObjectReader {
 	 * @param objectId
 	 *            identity of the object to open.
 	 * @param typeHint
-	 *            hint about the type of object being requested;
-	 *            {@link #OBJ_ANY} if the object type is not known, or does not
-	 *            matter to the caller.
+	 *            hint about the type of object being requested, e.g.
+	 *            {@link Constants#OBJ_BLOB}; {@link #OBJ_ANY} if the object
+	 *            type is not known, or does not matter to the caller.
 	 * @return a {@link ObjectLoader} for accessing the object.
 	 * @throws MissingObjectException
 	 *             the object does not exist.
@@ -323,9 +323,9 @@ public abstract class ObjectReader {
 	 * @param objectId
 	 *            identity of the object to open.
 	 * @param typeHint
-	 *            hint about the type of object being requested;
-	 *            {@link #OBJ_ANY} if the object type is not known, or does not
-	 *            matter to the caller.
+	 *            hint about the type of object being requested, e.g.
+	 *            {@link Constants#OBJ_BLOB}; {@link #OBJ_ANY} if the object
+	 *            type is not known, or does not matter to the caller.
 	 * @return size of object in bytes.
 	 * @throws MissingObjectException
 	 *             the object does not exist.
@@ -437,12 +437,52 @@ public abstract class ObjectReader {
 	}
 
 	/**
+	 * Advise the reader to avoid unreachable objects.
+	 * <p>
+	 * While enabled the reader will skip over anything previously proven to be
+	 * unreachable. This may be dangerous in the face of concurrent writes.
+	 *
+	 * @param avoid
+	 *            true to avoid unreachable objects.
+	 * @since 3.0
+	 */
+	public void setAvoidUnreachableObjects(boolean avoid) {
+		// Do nothing by default.
+	}
+
+	/**
+	 * An index that can be used to speed up ObjectWalks.
+	 *
+	 * @return the index or null if one does not exist.
+	 * @throws IOException
+	 *             when the index fails to load
+	 * @since 3.0
+	 */
+	public BitmapIndex getBitmapIndex() throws IOException {
+		return null;
+	}
+
+	/**
+	 * Release any resources used by this reader.
+	 * <p>
+	 * A reader that has been released can be used again, but may need to be
+	 * released after the subsequent usage. Use {@link #close()} instead.
+	 */
+	@Deprecated
+	public void release() {
+		close();
+	}
+
+	/**
 	 * Release any resources used by this reader.
 	 * <p>
 	 * A reader that has been released can be used again, but may need to be
 	 * released after the subsequent usage.
+	 *
+	 * @since 4.0
 	 */
-	public void release() {
+	@Override
+	public void close() {
 		// Do nothing.
 	}
 }

@@ -43,7 +43,8 @@
 
 package org.eclipse.jgit.transport;
 
-import static org.eclipse.jgit.transport.BasePackPushConnection.CAPABILITY_REPORT_STATUS;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_ATOMIC;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_REPORT_STATUS;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -199,8 +200,14 @@ public class ReceivePack extends BaseReceivePack {
 			}
 
 			if (unpackError == null) {
+				boolean atomic = isCapabilityEnabled(CAPABILITY_ATOMIC);
 				validateCommands();
+				if (atomic && anyRejects())
+					failPendingCommands();
+
 				preReceive.onPreReceive(this, filterCommands(Result.NOT_ATTEMPTED));
+				if (atomic && anyRejects())
+					failPendingCommands();
 				executeCommands();
 			}
 			unlockPack();
@@ -209,7 +216,7 @@ public class ReceivePack extends BaseReceivePack {
 				if (echoCommandFailures && msgOut != null) {
 					sendStatusReport(false, unpackError, new Reporter() {
 						void sendString(final String s) throws IOException {
-							msgOut.write(Constants.encode(s + "\n"));
+							msgOut.write(Constants.encode(s + "\n")); //$NON-NLS-1$
 						}
 					});
 					msgOut.flush();
@@ -221,14 +228,14 @@ public class ReceivePack extends BaseReceivePack {
 				}
 				sendStatusReport(true, unpackError, new Reporter() {
 					void sendString(final String s) throws IOException {
-						pckOut.writeString(s + "\n");
+						pckOut.writeString(s + "\n"); //$NON-NLS-1$
 					}
 				});
 				pckOut.end();
 			} else if (msgOut != null) {
 				sendStatusReport(false, unpackError, new Reporter() {
 					void sendString(final String s) throws IOException {
-						msgOut.write(Constants.encode(s + "\n"));
+						msgOut.write(Constants.encode(s + "\n")); //$NON-NLS-1$
 					}
 				});
 			}
@@ -242,6 +249,6 @@ public class ReceivePack extends BaseReceivePack {
 
 	@Override
 	protected String getLockMessageProcessName() {
-		return "jgit receive-pack";
+		return "jgit receive-pack"; //$NON-NLS-1$
 	}
 }

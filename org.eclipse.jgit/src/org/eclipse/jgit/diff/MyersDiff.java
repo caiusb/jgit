@@ -46,6 +46,7 @@ package org.eclipse.jgit.diff;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jgit.errors.DiffInterruptedException;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.util.IntList;
 import org.eclipse.jgit.util.LongList;
@@ -109,6 +110,7 @@ import org.eclipse.jgit.util.LongList;
  * @param <S>
  *            type of sequence.
  */
+@SuppressWarnings("hiding")
 public class MyersDiff<S extends Sequence> {
 	/** Singleton instance of MyersDiff. */
 	public static final DiffAlgorithm INSTANCE = new LowLevelDiffAlgorithm() {
@@ -167,11 +169,21 @@ public class MyersDiff<S extends Sequence> {
 	}
 
 	/**
-	 * Calculates the differences between a given part of A against another given part of B
-	 * @param beginA start of the part of A which should be compared (0<=beginA<sizeof(A))
-	 * @param endA end of the part of A which should be compared (beginA<=endA<sizeof(A))
-	 * @param beginB start of the part of B which should be compared (0<=beginB<sizeof(B))
-	 * @param endB end of the part of B which should be compared (beginB<=endB<sizeof(B))
+	 * Calculates the differences between a given part of A against another
+	 * given part of B
+	 *
+	 * @param beginA
+	 *            start of the part of A which should be compared
+	 *            (0&lt;=beginA&lt;sizeof(A))
+	 * @param endA
+	 *            end of the part of A which should be compared
+	 *            (beginA&lt;=endA&lt;sizeof(A))
+	 * @param beginB
+	 *            start of the part of B which should be compared
+	 *            (0&lt;=beginB&lt;sizeof(B))
+	 * @param endB
+	 *            end of the part of B which should be compared
+	 *            (beginB&lt;=endB&lt;sizeof(B))
 	 */
 	protected void calculateEdits(int beginA, int endA,
 			int beginB, int endB) {
@@ -395,6 +407,9 @@ if (k < beginK || k > endK)
 				// TODO: move end points out of the loop to avoid conditionals inside the loop
 				// go backwards so that we can avoid temp vars
 				for (int k = endK; k >= beginK; k -= 2) {
+					if (Thread.interrupted()) {
+						throw new DiffInterruptedException();
+					}
 					int left = -1, right = -1;
 					long leftSnake = -1L, rightSnake = -1L;
 					// TODO: refactor into its own function

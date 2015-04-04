@@ -58,6 +58,7 @@ import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.pgm.internal.CLIText;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -68,7 +69,7 @@ class Tag extends TextBuiltin {
 	private boolean force;
 
 	@Option(name = "-m", metaVar = "metaVar_message", usage = "usage_tagMessage")
-	private String message = "";
+	private String message = ""; //$NON-NLS-1$
 
 	@Argument(index = 0, metaVar = "metaVar_name")
 	private String tagName;

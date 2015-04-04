@@ -166,21 +166,21 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 		private ChannelSftp ftp;
 
 		SftpObjectDB(String path) throws TransportException {
-			if (path.startsWith("/~"))
+			if (path.startsWith("/~")) //$NON-NLS-1$
 				path = path.substring(1);
-			if (path.startsWith("~/"))
+			if (path.startsWith("~/")) //$NON-NLS-1$
 				path = path.substring(2);
 			try {
 				ftp = newSftp();
 				ftp.cd(path);
-				ftp.cd("objects");
+				ftp.cd("objects"); //$NON-NLS-1$
 				objectsPath = ftp.pwd();
 			} catch (TransportException err) {
 				close();
 				throw err;
 			} catch (SftpException je) {
 				throw new TransportException("Can't enter " + path + "/objects"
-						+ ": " + je.getMessage(), je);
+						+ ": " + je.getMessage(), je); //$NON-NLS-1$
 			}
 		}
 
@@ -196,7 +196,7 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 				throw err;
 			} catch (SftpException je) {
 				throw new TransportException("Can't enter " + p + " from "
-						+ parent.objectsPath + ": " + je.getMessage(), je);
+						+ parent.objectsPath + ": " + je.getMessage(), je); //$NON-NLS-1$
 			}
 		}
 
@@ -224,7 +224,7 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 		Collection<String> getPackNames() throws IOException {
 			final List<String> packs = new ArrayList<String>();
 			try {
-				final Collection<ChannelSftp.LsEntry> list = ftp.ls("pack");
+				final Collection<ChannelSftp.LsEntry> list = ftp.ls("pack"); //$NON-NLS-1$
 				final HashMap<String, ChannelSftp.LsEntry> files;
 				final HashMap<String, Integer> mtimes;
 
@@ -235,10 +235,10 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 					files.put(ent.getFilename(), ent);
 				for (final ChannelSftp.LsEntry ent : list) {
 					final String n = ent.getFilename();
-					if (!n.startsWith("pack-") || !n.endsWith(".pack"))
+					if (!n.startsWith("pack-") || !n.endsWith(".pack")) //$NON-NLS-1$ //$NON-NLS-2$
 						continue;
 
-					final String in = n.substring(0, n.length() - 5) + ".idx";
+					final String in = n.substring(0, n.length() - 5) + ".idx"; //$NON-NLS-1$
 					if (!files.containsKey(in))
 						continue;
 
@@ -267,8 +267,8 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 			} catch (SftpException je) {
 				if (je.id == ChannelSftp.SSH_FX_NO_SUCH_FILE)
 					throw new FileNotFoundException(path);
-				throw new TransportException("Can't get " + objectsPath + "/"
-						+ path + ": " + je.getMessage(), je);
+				throw new TransportException("Can't get " + objectsPath + "/" //$NON-NLS-2$
+						+ path + ": " + je.getMessage(), je); //$NON-NLS-1$
 			}
 		}
 
@@ -280,7 +280,7 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 				if (je.id == ChannelSftp.SSH_FX_NO_SUCH_FILE)
 					return;
 				throw new TransportException("Can't delete " + objectsPath
-						+ "/" + path + ": " + je.getMessage(), je);
+						+ "/" + path + ": " + je.getMessage(), je); //$NON-NLS-1$//$NON-NLS-2$
 			}
 
 			// Prune any now empty directories.
@@ -318,21 +318,21 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 					}
 				}
 
-				throw new TransportException("Can't write " + objectsPath + "/"
-						+ path + ": " + je.getMessage(), je);
+				throw new TransportException("Can't write " + objectsPath + "/" //$NON-NLS-2$
+						+ path + ": " + je.getMessage(), je); //$NON-NLS-1$
 			}
 		}
 
 		@Override
 		void writeFile(final String path, final byte[] data) throws IOException {
-			final String lock = path + ".lock";
+			final String lock = path + ".lock"; //$NON-NLS-1$
 			try {
 				super.writeFile(lock, data);
 				try {
 					ftp.rename(lock, path);
 				} catch (SftpException je) {
 					throw new TransportException("Can't write " + objectsPath
-							+ "/" + path + ": " + je.getMessage(), je);
+							+ "/" + path + ": " + je.getMessage(), je); //$NON-NLS-1$//$NON-NLS-2$
 				}
 			} catch (IOException err) {
 				try {
@@ -373,10 +373,11 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 			final TreeMap<String, Ref> avail = new TreeMap<String, Ref>();
 			readPackedRefs(avail);
 			readRef(avail, ROOT_DIR + Constants.HEAD, Constants.HEAD);
-			readLooseRefs(avail, ROOT_DIR + "refs", "refs/");
+			readLooseRefs(avail, ROOT_DIR + "refs", "refs/"); //$NON-NLS-1$ //$NON-NLS-2$
 			return avail;
 		}
 
+		@SuppressWarnings("unchecked")
 		private void readLooseRefs(final TreeMap<String, Ref> avail,
 				final String dir, final String prefix)
 				throws TransportException {
@@ -384,18 +385,18 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 			try {
 				list = ftp.ls(dir);
 			} catch (SftpException je) {
-				throw new TransportException("Can't ls " + objectsPath + "/"
-						+ dir + ": " + je.getMessage(), je);
+				throw new TransportException("Can't ls " + objectsPath + "/" //$NON-NLS-2$
+						+ dir + ": " + je.getMessage(), je); //$NON-NLS-1$
 			}
 
 			for (final ChannelSftp.LsEntry ent : list) {
 				final String n = ent.getFilename();
-				if (".".equals(n) || "..".equals(n))
+				if (".".equals(n) || "..".equals(n)) //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
 
-				final String nPath = dir + "/" + n;
+				final String nPath = dir + "/" + n; //$NON-NLS-1$
 				if (ent.getAttrs().isDir())
-					readLooseRefs(avail, nPath, prefix + n + "/");
+					readLooseRefs(avail, nPath, prefix + n + "/"); //$NON-NLS-1$
 				else
 					readRef(avail, nPath, prefix + n);
 			}
@@ -414,15 +415,15 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 			} catch (FileNotFoundException noRef) {
 				return null;
 			} catch (IOException err) {
-				throw new TransportException("Cannot read " + objectsPath + "/"
-						+ path + ": " + err.getMessage(), err);
+				throw new TransportException("Cannot read " + objectsPath + "/" //$NON-NLS-2$
+						+ path + ": " + err.getMessage(), err); //$NON-NLS-1$
 			}
 
 			if (line == null)
 				throw new TransportException("Empty ref: " + name);
 
-			if (line.startsWith("ref: ")) {
-				final String target = line.substring("ref: ".length());
+			if (line.startsWith("ref: ")) { //$NON-NLS-1$
+				final String target = line.substring("ref: ".length()); //$NON-NLS-1$
 				Ref r = avail.get(target);
 				if (r == null)
 					r = readRef(avail, ROOT_DIR + target, target);
@@ -440,7 +441,7 @@ public class TransportSftp extends SshTransport implements WalkTransport {
 				return r;
 			}
 
-			throw new TransportException("Bad ref: " + name + ": " + line);
+			throw new TransportException("Bad ref: " + name + ": " + line); //$NON-NLS-2$
 		}
 
 		private Storage loose(final Ref r) {

@@ -82,7 +82,7 @@ import org.eclipse.jgit.util.RawParseUtils;
  * Multiple simultaneous TreeWalk instances per {@link Repository} are
  * permitted, even from concurrent threads.
  */
-public class TreeWalk {
+public class TreeWalk implements AutoCloseable {
 	private static final AbstractTreeIterator[] NO_TREES = {};
 
 	/**
@@ -157,11 +157,8 @@ public class TreeWalk {
 	public static TreeWalk forPath(final Repository db, final String path,
 			final AnyObjectId... trees) throws MissingObjectException,
 			IncorrectObjectTypeException, CorruptObjectException, IOException {
-		ObjectReader reader = db.newObjectReader();
-		try {
+		try (ObjectReader reader = db.newObjectReader()) {
 			return forPath(reader, path, trees);
-		} finally {
-			reader.release();
 		}
 	}
 
@@ -198,6 +195,8 @@ public class TreeWalk {
 
 	private final ObjectReader reader;
 
+	private final boolean closeReader;
+
 	private final MutableObjectId idBuffer = new MutableObjectId();
 
 	private TreeFilter filter;
@@ -220,22 +219,30 @@ public class TreeWalk {
 	 * Create a new tree walker for a given repository.
 	 *
 	 * @param repo
-	 *            the repository the walker will obtain data from.
+	 *            the repository the walker will obtain data from. An
+	 *            ObjectReader will be created by the walker, and will be closed
+	 *            when the walker is closed.
 	 */
 	public TreeWalk(final Repository repo) {
-		this(repo.newObjectReader());
+		this(repo.newObjectReader(), true);
 	}
 
 	/**
 	 * Create a new tree walker for a given repository.
 	 *
 	 * @param or
-	 *            the reader the walker will obtain tree data from.
+	 *            the reader the walker will obtain tree data from. The reader
+	 *            is not closed when the walker is closed.
 	 */
 	public TreeWalk(final ObjectReader or) {
+		this(or, false);
+	}
+
+	private TreeWalk(final ObjectReader or, final boolean closeReader) {
 		reader = or;
 		filter = TreeFilter.ALL;
 		trees = NO_TREES;
+		this.closeReader = closeReader;
 	}
 
 	/** @return the reader this walker is using to load objects. */
@@ -247,10 +254,26 @@ public class TreeWalk {
 	 * Release any resources used by this walker's reader.
 	 * <p>
 	 * A walker that has been released can be used again, but may need to be
-	 * released after the subsequent usage.
+	 * released after the subsequent usage. Use {@link #close()} instead.
 	 */
+	@Deprecated
 	public void release() {
-		reader.release();
+		close();
+	}
+
+	/**
+	 * Release any resources used by this walker's reader.
+	 * <p>
+	 * A walker that has been released can be used again, but may need to be
+	 * released after the subsequent usage.
+	 *
+	 * @since 4.0
+	 */
+	@Override
+	public void close() {
+		if (closeReader) {
+			reader.close();
+		}
 	}
 
 	/**
@@ -777,7 +800,7 @@ public class TreeWalk {
 	 *            end with '/' prior to invocation.
 	 * @param pLen
 	 *            number of bytes from <code>buf</code> to test.
-	 * @return < 0 if p is before the current path; 0 if p matches the current
+	 * @return &lt; 0 if p is before the current path; 0 if p matches the current
 	 *         path; 1 if the current path is past p and p will never match
 	 *         again on this tree walk.
 	 */
@@ -835,13 +858,17 @@ public class TreeWalk {
 		final AbstractTreeIterator t = currentHead;
 		final byte[] c = t.path;
 		final int cLen = t.pathLen;
-		int ci;
 
-		for (ci = 1; ci < cLen && ci < pLen; ci++) {
-			if (c[cLen-ci] != p[pLen-ci])
+		for (int i = 1; i <= pLen; i++) {
+			// Pattern longer than current path
+			if (i > cLen)
+				return false;
+			// Current path doesn't match pattern
+			if (c[cLen - i] != p[pLen - i])
 				return false;
 		}
 
+		// Whole pattern tested -> matches
 		return true;
 	}
 

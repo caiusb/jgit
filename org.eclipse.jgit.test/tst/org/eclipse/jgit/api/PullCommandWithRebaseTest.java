@@ -57,17 +57,16 @@ import java.io.IOException;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.MergeResult.MergeStatus;
 import org.eclipse.jgit.api.RebaseResult.Status;
+import org.eclipse.jgit.junit.RepositoryTestCase;
 import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryState;
-import org.eclipse.jgit.lib.RepositoryTestCase;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepository;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -76,7 +75,7 @@ import org.junit.Test;
 
 public class PullCommandWithRebaseTest extends RepositoryTestCase {
 	/** Second Test repository */
-	protected FileRepository dbTarget;
+	protected Repository dbTarget;
 
 	private Git source;
 
@@ -181,7 +180,7 @@ public class PullCommandWithRebaseTest extends RepositoryTestCase {
 				+ remoteUri
 				+ "\nSource change\n=======\nTarget change\n>>>>>>> 42453fd Target change in local\n";
 		assertFileContentsEqual(targetFile, result);
-		assertEquals(RepositoryState.REBASING_INTERACTIVE, target
+		assertEquals(RepositoryState.REBASING_MERGE, target
 				.getRepository().getRepositoryState());
 	}
 
@@ -226,7 +225,7 @@ public class PullCommandWithRebaseTest extends RepositoryTestCase {
 		String result = "<<<<<<< Upstream, based on branch 'master' of local repository\n"
 				+ "Master change\n=======\nSlave change\n>>>>>>> 4049c9e Source change in based on master\n";
 		assertFileContentsEqual(targetFile, result);
-		assertEquals(RepositoryState.REBASING_INTERACTIVE, target
+		assertEquals(RepositoryState.REBASING_MERGE, target
 				.getRepository().getRepositoryState());
 	}
 
@@ -320,7 +319,7 @@ public class PullCommandWithRebaseTest extends RepositoryTestCase {
 
 		config
 				.addURI(new URIish(source.getRepository().getWorkTree()
-						.getPath()));
+						.getAbsolutePath()));
 		config.addFetchRefSpec(new RefSpec(
 				"+refs/heads/*:refs/remotes/origin/*"));
 		config.update(targetConfig);
@@ -340,7 +339,8 @@ public class PullCommandWithRebaseTest extends RepositoryTestCase {
 		assertFileContentsEqual(targetFile, "Hello world");
 	}
 
-	private void writeToFile(File actFile, String string) throws IOException {
+	private static void writeToFile(File actFile, String string)
+			throws IOException {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(actFile);
@@ -352,7 +352,7 @@ public class PullCommandWithRebaseTest extends RepositoryTestCase {
 		}
 	}
 
-	private void assertFileContentsEqual(File actFile, String string)
+	private static void assertFileContentsEqual(File actFile, String string)
 			throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		FileInputStream fis = null;

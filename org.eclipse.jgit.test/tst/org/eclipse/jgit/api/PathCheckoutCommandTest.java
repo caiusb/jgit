@@ -43,6 +43,7 @@
 package org.eclipse.jgit.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,10 +53,10 @@ import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.dircache.DirCacheEntry;
 import org.eclipse.jgit.errors.NoWorkTreeException;
+import org.eclipse.jgit.junit.RepositoryTestCase;
 import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.RepositoryState;
-import org.eclipse.jgit.lib.RepositoryTestCase;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Before;
@@ -274,6 +275,39 @@ public class PathCheckoutCommandTest extends RepositoryTestCase {
 
 		assertEquals("Conflicting", read(FILE1));
 		assertStageOneToThree(FILE1);
+	}
+
+	@Test
+	public void testCheckoutOursWhenNoBase() throws Exception {
+		String file = "added.txt";
+
+		git.checkout().setCreateBranch(true).setName("side")
+				.setStartPoint(initialCommit).call();
+		writeTrashFile(file, "Added on side");
+		git.add().addFilepattern(file).call();
+		RevCommit side = git.commit().setMessage("Commit on side").call();
+
+		git.checkout().setName("master").call();
+		writeTrashFile(file, "Added on master");
+		git.add().addFilepattern(file).call();
+		git.commit().setMessage("Commit on master").call();
+
+		git.merge().include(side).call();
+		assertEquals(RepositoryState.MERGING, db.getRepositoryState());
+
+		DirCache cache = DirCache.read(db.getIndexFile(), db.getFS());
+		assertEquals("Expected add/add file to not have base stage",
+				DirCacheEntry.STAGE_2, cache.getEntry(file).getStage());
+
+		assertTrue(read(file).startsWith("<<<<<<< HEAD"));
+
+		git.checkout().setStage(Stage.OURS).addPath(file).call();
+
+		assertEquals("Added on master", read(file));
+
+		cache = DirCache.read(db.getIndexFile(), db.getFS());
+		assertEquals("Expected conflict stages to still exist after checkout",
+				DirCacheEntry.STAGE_2, cache.getEntry(file).getStage());
 	}
 
 	@Test(expected = IllegalStateException.class)
