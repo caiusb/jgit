@@ -620,4 +620,23 @@ public class RevCommit extends RevObject {
 		appendCoreFlags(s);
 		return s.toString();
 	}
+
+	/**
+	 * Returns the commit time in UTC
+	 *
+	 * @return UTC time, expressed in seconds since the epoch
+	 */
+	public int getUTCTime() {
+		int offsetMinutes = getAuthorIdent().getTimeZoneOffset();
+		return getCommitTime() + (offsetMinutes * 60);
+	}
+
+	/**
+	 * Returns the time zone offset to UTC, in seconds
+	 *
+	 * @return the time zone offset
+	 */
+	public int getTimeZoneOffset() {
+		return getAuthorIdent().getTimeZoneOffset() * 60;
+	}
 }
