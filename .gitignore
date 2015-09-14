@@ -1,1 +1,4 @@
 /target
+org.eclipse.jgit.console/.project
+org.eclipse.jgit.iplog/.project
+.history
